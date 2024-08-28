@@ -1,15 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="http://localhost:8000/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.28.2/min/vs/loader.min.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+  /* Styles for the typing indicator container */
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    /* margin-bottom: 10px; */
+    margin-left: 5px;
+    position: relative;
+    height: 200px;
+    /* margin-top: 100px; */
+  }
+  
+  /* Styles for the dots */
+  .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color:white;
+    margin-right: 5px;
+    animation: moveUpDown 0.5s infinite ease-in-out alternate;
+  }
+
+  /* Keyframe animation for moving dots up and down */
+  @keyframes moveUpDown {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-5px);
+    }
+  }
+
+  /* Adjust the position of dots */
+  .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+.animation{
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            overflow-x: hidden;
+        }
         .cursor{
-            /* height: 10px;
+            /* height: 10px; 
             width: 10px;
             background-color: red; */
             cursor: pointer;
@@ -19,6 +74,11 @@
             margin:0;
             padding:0;
             /* transform: rotateZ(-45deg); */
+        }
+        .rotate {
+            transform: rotateZ(-40deg);
+            font-size: 20px;
+            display: inline-block;
         }
         .sup{
             
@@ -31,39 +91,344 @@
             font-size: 8px;
             font-weight: bold;
         }
-        #text_editor{
-            width: 50vw;
-            height: 50vh;
+
+        body {
+            background-color: #2c2c2c;
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+
         }
-        .rotate{
-            transform: rotateZ(-30deg);
+
+        .editor_div {
+            width: 75%;
+            padding: 0px 10px 0px 0px;
+            height: 21px;
+            border-right: 1px solid #808080;
+
+        }
+
+        #main_editor {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            caret-color: white;
+            color: white;
+            letter-spacing: 1px;
+            column-gap: 1px;
+            width: 100%;
+            padding-bottom: 20px;
+            position: absolute;
+
+        }
+
+        .editor_div:focus {
+            border-top: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            background-color: ;
+            outline: none;
+        }
+
+        .line_number {
             font-size: 20px;
-            display: inline-block;
         }
-        #main_container{
+
+        .line_main_div {
+            display: flex;
+            flex-direction: row;
+            border: none;
+            outline: none;
+        }
+
+        #lines_container {
+            text-align: center;
+            width: 5rem;
+
+
+
+        }
+
+        #text_container {
+
+            background-color: #2c2c2c;
+            height: 200px;
+            width: 100%;
+        }
+
+        .lines {
+            /* background-color: black; */
+            display: block;
+            height: 21px;
+            user-select: none;
+            color: gray;
+            border-right: 1px solid #808080;
+
+        }
+
+        .focus_numbers {
+            color: white;
+        }
+
+        #users_list {
+
+            width: 20%;
+            /* background-color: red; */
             display: flex;
             flex-direction: column;
+            position: fixed !important;
+            height: 95vh;
+            row-gap: 10px;
+            top: 0;
+            margin-top: 20px;
+            right: 0;
         }
-        #button{
-            width:fit-content;
+
+        .users {
+            display: flex;
+            flex-direction: row;
+            align-items: baseline;
+            column-gap: 5px;
         }
+
+
+        #user_name_logo {
+            height: 32px;
+            width: 32px;
+
+            border: 3px solid white;
+            border-radius: 100%;
+            display: flex;
+            font-size: 14px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user_status {
+            height: 10px;
+            width: 10px;
+            border-radius: 100%;
+            background-color: green;
+        }
+
+        ul {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            row-gap: 10px;
+
+
+        }
+
+        ul li {
+            list-style-type: none;
+            display: block;
+            background-color: #00000050;
+            width: 90%;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            padding-left: 10px;
+            align-items: center;
+            height: 30px;
+        }
+
+        ul li:hover {
+            background-color: #00000070;
+        }
+
+        #collaborative,
+        #joined {
+            margin-top: 30px;
+            cursor: pointer;
+        }
+
+        #collaborative::after,
+        #joined::after {
+            content: '\2193';
+        }
+
+        .right_arrow {
+            color: green;
+            overflow-x: hidden;
+            padding-left: 5px;
+            display: block;
+        }
+
+        .move_arrow {
+            animation: move 0.5s ease-out forwards;
+
+        }
+
+        @keyframes move {
+            100% {
+                margin-left: 210px;
+                display: none;
+            }
+        }
+
+        .collaborative li {
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        .accept {
+            background-color: green;
+        }
+        .reject {
+            background-color: red;
+        }
+
+        .accept,.reject{
+            border-radius: 2px;
+            display: block;
+            padding:1px;
+            font-size:12px;
+        }
+        #toast {
+            height:auto;
+            width: auto;
+            padding:8px;
+            border-radius: 5px;
+            background-color: green;
+            position: absolute;
+            z-index: 1;
+            color:white;
+            font-weight: bold;
+            margin-top: -100%;
+            
+        }
+
+        .animate_toast {
+           transition: all;
+            animation: ani 0.1s ease-out;
+        }
+        @keyframes ani {
+            0%{
+                margin-top: 0%;
+            }
+
+            50%{
+                margin-top: -0.7%;
+            }
+
+            100%{
+                margin-top: 0%;
+            }
+        }
+        #loader{
+            position: fixed;
+            font-size: 50px;
+            left:50%;
+            top:50%;
+            animation:spin 1s  infinite;
+            display: none;
+        }
+        @keyframes spin {
+            100%{
+                transform: rotate(360deg);
+            }
+        }
+        .focus_div {
+            border-top: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            
+        }
+        .target {
+            border-left:5px solid green ;
+  }
+  video{
+    max-width: 400px;
+    max-height: 200px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
     </style>
 </head>
-<body>    
-    <div id="main_container">
 
-   
-<div>Hey welcome</div>
-    <button id="button">Click</button>
+<body>
+    <div class="typing-indicator" id="indicator">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      
+    <div id="toast">You got new Collaboration Request</div>
+    <div id="main_editor">
+        <div id="lines_container">
 
-    <textarea id="text_editor">
+        </div>
+        <div id="text_container">
+        </div>
+        <div id="users_list">
+            <div id="logged-user">
+                <div class="users">
+                    <span id="user_name_logo">A</span>
+                    <span id="user_name">Aashis</span>
+                </div>
+            </div>
 
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta, iusto officia quasi nesciunt ad dolor consequuntur in deleniti assumenda odit atque vero odio aperiam doloremque doloribus earum deserunt delectus enim asperiores nihil veritatis totam unde quisquam soluta! Eveniet, delectus ad!
+            <h4 id="collaborative">Collaborative users</h4>
+            <ul class="collaborative">
+                <!-- <li>Rajendra <span class="accept">Accept</span> <span class="reject">Reject</span></li> -->
 
-    </textarea>
+            </ul>
+            <h4 id="joined">Joined users</h4>
+            <ul class="joined">
+                <!-- <li>Rajendra <span class="right_arrow">&#129050;</span></li> -->
+            </ul>
+        </div>
 
-</div>
-    <script src="./client.js"></script>
 
+        <div id="loader">&#8635;</div>
+        <!-- <video id="localVideo" autoplay playsinline controls="true"></video> -->
+        <script src="./client.js"></script>
+        <script type="module" src="./js_modules/setup.mjs"></script>
+        <!-- <script>
+
+
+            // $("ul").hide()
+
+            // $("#collaborative").click(() => {
+            //     $(".collaborative").toggle("fast")
+            // })
+            // $("#joined").click(() => {
+            //     $(".joined").toggle("fast")
+            // })
+
+            const d  =   document.getElementById("toast")
+            
+            setTimeout(() => {
+              
+              d.style.marginTop = "0%"
+              d.setAttribute("class", "animate_toast")
+                
+            }, 2000)
+
+            setTimeout(() => {
+              
+              d.style.marginTop = "-100%"
+              d.removeAttribute("class", "animate_toast")
+                
+            }, 4000)
+// JavaScript to control the animation
+document.addEventListener("DOMContentLoaded", function() {
+  var typingIndicator = document.querySelectorAll(".typing-indicator");
+  
+
+  for(let i = 0; i < typingIndicator.length; i++){
+
+      typingIndicator[i].classList.add("typing");
+  }
+
+  // Add a class to start animation
+});
+
+
+
+
+        </script> -->
 </body>
+
 </html>

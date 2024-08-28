@@ -10,15 +10,24 @@
             padding:0;
         }
         .box{
-            width: 100%;
+            width: 100vw;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            background:teal;
+            
         }
         form {
             padding:20px;
-            background-color: black;
+            height: 300px;
+            width: 280px;
+            border-radius: 10px 30% 10px 20%;
+            background-image:linear-gradient(navy,teal);
+            box-shadow: 2px 2px 8px #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            justify-content:space-around;
         }
         button{
             padding: 5px;
@@ -26,14 +35,58 @@
         }
         input {
             padding:5px;
+            height: 30px;
+            outline: none;
+            border-radius: 5px;
+            border:none;
+            font-size: 16px;
+
+        }
+        input:focus{
+            display: block;
+            outline:5px solid #87CEEB50;
+        }
+        #register_user, #login_user{
+            display: flex;
+            flex-direction: column;
+            row-gap: 10px;
+        }
+        label{
+            color:white;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        button{
+            font-weight: bold;
+            background-color: teal;
+            border: none;
+            outline: none;
+            padding:10px 0px 10px 0px;
+            cursor: pointer;
+            color:white;
+            border-radius: 5px;
+        }
+        button:hover{
+            background: linear-gradient(to right, teal,navy);
+        }
+        button:active{
+            background-color: red;
         }
     </style>
 </head>
 <body>
     <div class="box">
         <form>
-            <input type="text" placeholder="your name" id="username">
-            <button id="join">Enter</button>
+            <div id="register_user">
+                <label>For Registration</label>
+                <input type="text" placeholder="your name" id="r_username">
+                <button id="register">Register</button>
+            </div>
+            <div id="login_user">
+                <label>For Login</label>
+                <input type="text" placeholder="your name" id="l_username">
+                <button id="login">Login</button>
+            </div>
         </form>
     </div>
     <script src="./main.js"></script>
